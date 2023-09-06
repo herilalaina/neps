@@ -214,11 +214,12 @@ class DeepGP:
         continuous_values = []
 
         for hp_name, hp in config.items():
+            if hp_name == "epoch": pass # ignore epoch for DyHPO
             if hp_name in self.categorical_hps:
                 label = hp.value
                 categorical_encoding[np.argwhere(self.categories_array == label)] = 1
             else:
-                continuous_values.append(hp.value)
+                continuous_values.append(hp.normalized().value)
 
         continuous_encoding = np.array(continuous_values)
 
@@ -315,7 +316,7 @@ class DeepGP:
         x_train: list[SearchSpace],
         y_train: list[float],
         learning_curves: list[list[float]],
-        normalize_y: bool = False,
+        normalize_y: bool = True,
         normalize_budget: bool = True,
         n_epochs: int = 1000,
         optimizer_args: dict | None = None,
